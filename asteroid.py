@@ -6,16 +6,28 @@ from constants import *
 
 class Asteroid(CircleShape):
     containers = None
-    def __init__(self, x, y, size="LARGE", radius=None):
-        if size == "LARGE":
-            radius = 40
-        elif size == "MEDIUM":
-            radius = 25
-        elif size == "SMALL":
-            radius = 15
+    def __init__(self, x, y, radius=None, size=None):
+        if radius is not None:
+            self.size = "LARGE"
+            if radius >= 40:
+                self.size = "LARGE"
+            elif radius >= 25:
+                self.size = "MEDIUM"
+            else:
+                self.size = "SMALL"
+        elif size is not None:
+            if size == "LARGE":
+                self.radius = 40
+                self.size = "LARGE"
+            elif size == "MEDIUM":
+                self.radius = 25
+                self.size = "MEDIUM"
+            elif size == "SMALL":
+                self.radius = 15
+                self.size = "SMALL"
         else:
-            radius = 40 
-        self.size = size
+            self.radius = 40
+            self.size = "LARGE"
         
         super().__init__(x, y, radius)
         
@@ -63,18 +75,14 @@ class Asteroid(CircleShape):
         random_angle = random.uniform(20, 50)
         new_velocity1 = self.velocity.rotate(random_angle) * 1.2
         new_velocity2 = self.velocity.rotate(-random_angle) * 1.2
+        new_radius = self.radius - ASTEROID_MIN_RADIUS
 
-        if self.size == "LARGE":
-            new_size = "MEDIUM"
-        elif self.size == "MEDIUM":
-            new_size = "SMALL"
-        else:
-            new_size = "SMALL"
+        
 
         # Create two smaller asteroids
-        new_asteroid1 = Asteroid(self.position.x, self.position.y, new_size)
+        new_asteroid1 = Asteroid(self.position.x, self.position.y, radius=new_radius)
         new_asteroid1.velocity = new_velocity1
 
-        new_asteroid2 = Asteroid(self.position.x, self.position.y, new_size)
+        new_asteroid2 = Asteroid(self.position.x, self.position.y, radius=new_radius)
         new_asteroid2.velocity = new_velocity2
         
