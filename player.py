@@ -10,6 +10,12 @@ class Player(CircleShape):
         self.shots_group = shots_group
         self.shoot_cooldown = 0
         self.shoot_delay = 0.3
+
+        self.shield_active = True
+        self.shield_duration = 3.0
+        self.shield_timer = 0
+        self.shield_max_breaks = 5       
+
     def triangle(self):
             forward = pygame.Vector2(0, 1).rotate(self.rotation)
             right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
@@ -20,6 +26,11 @@ class Player(CircleShape):
 
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
+
+
+        if self.shield_active:
+            shield_radius = self.radius * 1.5
+            pygame.draw.circle(screen, "cyan", self.position, shield_radius, 2)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -42,7 +53,11 @@ class Player(CircleShape):
                 self.shoot()
                 self.shoot_cooldown = self.shoot_delay
                 
-
+            if self.shield_active:
+                self.shield_timer -= dt
+                if self.shield_timer <= 0:
+                    self.shield_active = False
+                    self.shield_break_count = 0
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
@@ -64,3 +79,20 @@ class Player(CircleShape):
         
         new_shot = Shot(shot_position, velocity)
         self.shots_group.add(new_shot)
+
+    def collides_with(self, other):
+        distance = (self.position - other.position).length()
+        return distance < self.radius + other.radius
+
+    def handle_collision(self):
+        if self.shield_active:
+            self.shield_active = False
+            self.shield_timer = 0
+        else:
+            self.respawn_with_shield()
+
+    def respawn_with_shield(self):
+        self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.rotation = 0
+        self.shield_active = True
+        self.shield_timer = self.shield_duration

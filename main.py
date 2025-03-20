@@ -135,22 +135,37 @@ def main():
         if game_state == GAME_STATE_PLAYING:
 
             updateable.update(dt)
-        
+           
+            
+                  
             for asteroid in asteroids:
                 if player.is_colliding(asteroid):
-                    lives -= 1
-                    if lives <= 0:
-                        print("Game Over!")
-                        game_state = GAME_STATE_GAME_OVER
+                    if player.shield_active:
+                        player.shield_break_count += 1
+                        if hasattr(asteroid, 'split'):
+                            asteroid.split()
+                        if player.shield_break_count >= player.shield_max_breaks:
+                            player.shield_active = False
+                            player.shield_timer = 0
+                            player.shield_break_count = 0
+
                     else:
-                        print(f"Lives remaining: {lives}")
-                        player.position.x = SCREEN_WIDTH / 2
-                        player.position.y = SCREEN_HEIGHT / 2
-                        if hasattr(player, 'velocity'):
-                            player.velocity.x = 0
-                            player.velocity.y = 0
-                        break
+                        lives -= 1
+                        if lives <= 0:
+                            print("Game Over!")
+                            game_state = GAME_STATE_GAME_OVER
+                        else:
+                            print(f"Lives remaining: {lives}")
+                            player.position.x = SCREEN_WIDTH / 2
+                            player.position.y = SCREEN_HEIGHT / 2
+                            if hasattr(player, 'velocity'):
+                                player.velocity.x = 0
+                                player.velocity.y = 0
+                            player.shield_active = True
+                            player.shield_timer = player.shield_duration
+                    break
         
+
             for asteroid in list(asteroids):
             
                 for bullet in list(shots_group):
