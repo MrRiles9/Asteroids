@@ -35,6 +35,8 @@ class Asteroid(CircleShape):
         if Asteroid.containers:
             for container in Asteroid.containers:
                 container.add(self)
+
+        self.shape = self.generate_asteroid_shape(self.radius)
         
         if self.velocity.x == 0 and self.velocity.y == 0:
             speed = random.uniform(20, 50)
@@ -42,15 +44,25 @@ class Asteroid(CircleShape):
             self.velocity.x = math.cos(angle) * speed
             self.velocity.y = math.sin(angle) * speed
     
+
+    def generate_asteroid_shape(self, radius, jaggedness=0.4, num_points=8):
+        points = []
+        for i in range(num_points):
+            angle = (i / num_points) * math.pi * 2
+            distance = radius + random.uniform(-radius * jaggedness, radius * jaggedness)
+            x = math.cos(angle) * distance
+            y = math.sin(angle) * distance
+            points.append((x, y))
+        return points
+
+
     def draw(self, surface):
-        pygame.draw.circle(
-            surface,
-            (255, 255, 255), 
-            (self.position.x,
-            self.position.y),
-            self.radius,
-            2
-        )
+        
+        shifted_points = [
+            (self.position.x + x, self.position.y + y) for x, y in self.shape
+        ]
+        pygame.draw.polygon(surface, (255, 255, 255), shifted_points, 2)
+        
         
     def update(self, dt):
         self.position.x += self.velocity.x * dt
