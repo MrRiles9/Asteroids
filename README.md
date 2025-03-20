@@ -49,8 +49,7 @@ Asteroid splitting system with varied trajectories
 Future Improvements
 Potential enhancements could include:
 
-Score tracking system
-Lives and game over states
+Easter Egg for BillyBalls
 UFO enemies
 Sound effects and music
 Power-ups and special weapons
