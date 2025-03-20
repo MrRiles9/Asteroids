@@ -14,7 +14,7 @@ class Player(CircleShape):
         self.shield_active = True
         self.shield_duration = 3.0
         self.shield_timer = 0
-        self.shield_max_breaks = 5       
+        self.shield_max_breaks = 10       
 
     def triangle(self):
             forward = pygame.Vector2(0, 1).rotate(self.rotation)
