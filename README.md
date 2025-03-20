@@ -49,6 +49,7 @@ Asteroid splitting system with varied trajectories
 Future Improvements
 Potential enhancements could include:
 
+Make asteroids lumpy
 Easter Egg for BillyBalls
 UFO enemies
 Sound effects and music
